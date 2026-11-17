@@ -235,7 +235,10 @@ if !exists(":def") || !airline#util#has_vim9_script()
 
   function! airline#util#is_popup_window(winnr)
     " Keep the statusline active if it's a popup window
-    if exists('*win_gettype')
+    if has('nvim') && exists('*nvim_win_get_config')
+      let id = win_getid(a:winnr)
+      return id > 0 && nvim_win_get_config(id).relative !=# ''
+    elseif exists('*win_gettype')
       return win_gettype(a:winnr) ==# 'popup' || win_gettype(a:winnr) ==# 'autocmd'
     else
         return airline#util#getwinvar(a:winnr, '&buftype', '') ==# 'popup'
